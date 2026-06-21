@@ -66,13 +66,6 @@ h1 {
   font-size: 96px;
 }
 
-@media screen and (max-width: 1024px) {
-  h1 {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-
 h2 {
   font-size: 24px;
   line-height: 118%;
@@ -601,6 +594,18 @@ button.gold-btn {
   color: var(--purple);
 }
 
+@media screen and (max-width: 1485px) {
+  .hero__registration_blocks {
+    gap: 60px;
+  }
+}
+
+@media screen and (max-width: 1395px) {
+  .hero__registration_blocks {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media screen and (max-width: 1085px) {
   .container {
     padding: 0 60px;
@@ -624,6 +629,10 @@ button.gold-btn {
 
   .links ul li a {
     font-size: 16px;
+  }
+
+  .hero_title {
+    font-size: 64px;
   }
 }
 
@@ -689,6 +698,10 @@ button.gold-btn {
   .popup {
     padding: 54px 40px 75px 40px;
   }
+
+  .hero_section {
+    margin-top: 100px;
+  }
 }
 
 .video-popup .popup-close {
@@ -710,6 +723,16 @@ button.gold-btn {
 
 .video-popup .popup-close:hover {
   background: var(--gold);
+}
+
+@media screen and (max-width: 660px) {
+  .hero_title {
+    font-size: 36px;
+  }
+
+  .hero_description {
+    font-size: 16px;
+  }
 }
 
 @media screen and (max-width: 360px) {
