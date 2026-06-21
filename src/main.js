@@ -42,6 +42,36 @@ popupOverlay?.addEventListener("click", (e) => {
   }
 });
 
+// Video popup
+const videoPopupBtn = document.querySelector(".play_video_btn");
+const videoPopupOverlay = document.getElementById("videoPopup");
+const videoPopupClose = document.getElementById("videoPopupClose");
+const popupVideo = document.querySelector(".popup-video");
+
+videoPopupBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  videoPopupOverlay?.classList.add("active");
+  document.body.classList.add("no-scroll");
+});
+
+videoPopupClose?.addEventListener("click", () => {
+  videoPopupOverlay?.classList.remove("active");
+  document.body.classList.remove("no-scroll");
+  if (popupVideo) {
+    popupVideo.pause();
+  }
+});
+
+videoPopupOverlay?.addEventListener("click", (e) => {
+  if (e.target === videoPopupOverlay) {
+    videoPopupOverlay.classList.remove("active");
+    document.body.classList.remove("no-scroll");
+    if (popupVideo) {
+      popupVideo.pause();
+    }
+  }
+});
+
 //Registration form
 // Tab switching functionality
 const tabs = document.querySelectorAll(".tab");

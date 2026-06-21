@@ -550,6 +550,18 @@ button.gold-btn {
   margin-bottom: 40px;
 }
 
+.video-popup {
+  padding: 40px;
+  max-width: 90%;
+  background-color: transparent;
+}
+
+.popup-video {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 10px;
+}
+
 .play_video_btn {
   position: relative;
   display: flex;
@@ -679,6 +691,27 @@ button.gold-btn {
   }
 }
 
+.video-popup .popup-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: var(--white);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--black);
+  font-family: var(--heading);
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-popup .popup-close:hover {
+  background: var(--gold);
+}
+
 @media screen and (max-width: 360px) {
   .popup {
     padding: 54px 20px 75px 20px;
@@ -688,5 +721,8 @@ button.gold-btn {
   }
   .popup-desc {
     font-size: 16px;
+  }
+  .video-popup {
+    padding: 20px;
   }
 }
