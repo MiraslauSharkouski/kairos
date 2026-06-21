@@ -19,6 +19,29 @@ document.querySelectorAll(".header_links nav a").forEach((link) => {
   });
 });
 
+// Learn More popup
+const learnMoreBtn = document.querySelector(".learn_more_btn");
+const popupOverlay = document.getElementById("learnMorePopup");
+const popupClose = document.getElementById("popupClose");
+
+learnMoreBtn?.addEventListener("click", (e) => {
+  e.preventDefault();
+  popupOverlay?.classList.add("active");
+  document.body.classList.add("no-scroll");
+});
+
+popupClose?.addEventListener("click", () => {
+  popupOverlay?.classList.remove("active");
+  document.body.classList.remove("no-scroll");
+});
+
+popupOverlay?.addEventListener("click", (e) => {
+  if (e.target === popupOverlay) {
+    popupOverlay.classList.remove("active");
+    document.body.classList.remove("no-scroll");
+  }
+});
+
 //Registration form
 // Tab switching functionality
 const tabs = document.querySelectorAll(".tab");

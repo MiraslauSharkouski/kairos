@@ -483,6 +483,73 @@ button.gold-btn {
   right: 0px;
 }
 
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup-overlay.active {
+  display: flex;
+  overflow-y: auto;
+}
+
+.popup {
+  background-color: var(--white);
+  padding: 60px 149px 105px 60px;
+  position: relative;
+  width: 90%;
+  text-align: center;
+  max-height: 90vw;
+  height: auto;
+  overflow-y: auto;
+  margin-top: 320px;
+  margin-bottom: 160px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  color: var(--black);
+  font-family: var(--heading);
+  height: 46px;
+}
+
+.popup-close:hover {
+  color: var(--purple);
+}
+
+.popup-title {
+  color: var(--purple);
+  font-size: 48px;
+  font-family: var(--heading);
+  margin: 0;
+  max-width: 933px;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+}
+
+.popup-desc {
+  color: var(--purple);
+  font-size: 18px;
+  text-align: left;
+  margin-bottom: 40px;
+}
+
 .play_video_btn {
   position: relative;
   display: flex;
@@ -605,5 +672,21 @@ button.gold-btn {
 
   .links ul li a::after {
     display: none;
+  }
+
+  .popup {
+    padding: 54px 40px 75px 40px;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .popup {
+    padding: 54px 20px 75px 20px;
+  }
+  .popup-title {
+    font-size: 24px;
+  }
+  .popup-desc {
+    font-size: 16px;
   }
 }
