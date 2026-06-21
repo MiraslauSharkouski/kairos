@@ -749,3 +749,199 @@ button.gold-btn {
     padding: 20px;
   }
 }
+
+.online_banking {
+  padding: 80px 80px 120px;
+  background: linear-gradient(180deg, rgba(3, 28, 57, 0.65), rgba(39, 0, 91, 0.88));
+}
+
+.crypto-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(18px);
+}
+
+.crypto-panel__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.crypto-kicker {
+  margin-bottom: 10px;
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.crypto-panel h2 {
+  font-size: 36px;
+  text-transform: uppercase;
+}
+
+.crypto-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.crypto-status span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+.crypto-status.is-connected span {
+  background: #22c55e;
+  box-shadow: 0 0 12px #22c55e;
+}
+
+.crypto-status.is-error span {
+  background: #ef4444;
+  box-shadow: 0 0 12px #ef4444;
+}
+
+.crypto-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.crypto-card {
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.crypto-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(189, 171, 110, 0.5);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.crypto-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.crypto-card__name {
+  display: block;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+.crypto-card__pair {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.crypto-card__badge {
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(189, 171, 110, 0.16);
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.crypto-card__price {
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.crypto-card__change {
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.crypto-card__change.is-positive {
+  color: #22c55e;
+}
+
+.crypto-card__change.is-negative {
+  color: #ef4444;
+}
+
+.crypto-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.crypto-card__stats span {
+  display: block;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.crypto-card__stats strong {
+  display: block;
+  font-size: 13px;
+}
+
+@media screen and (max-width: 1024px) {
+  .crypto-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .online_banking {
+    padding: 60px 24px 80px;
+  }
+
+  .crypto-panel {
+    padding: 22px;
+  }
+
+  .crypto-panel__top {
+    flex-direction: column;
+  }
+
+  .crypto-panel h2 {
+    font-size: 28px;
+  }
+
+  .crypto-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .crypto-card__price {
+    font-size: 24px;
+  }
+}

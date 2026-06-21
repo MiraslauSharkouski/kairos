@@ -147,10 +147,215 @@
   </section>
 
   <section class="online_banking" id="online_banking">
-    online banking
+    <div class="crypto-panel">
+      <div class="crypto-panel__top">
+        <div>
+          <p class="crypto-kicker">Live market</p>
+          <h2>Cryptocurrency Market</h2>
+        </div>
+        <div class="crypto-status" id="cryptoStatus">
+          <span></span>
+          Connecting...
+        </div>
+      </div>
+
+      <div class="crypto-grid" id="cryptoGrid"></div>
+    </div>
   </section>
   <!-- <div id="app"></div> -->
   <script type="module" src="/src/main.js"></script>
+
+  <script>
+    (() => {
+      const coins = [
+        { symbol: "BTC", pair: "BTCUSDT", name: "Bitcoin" },
+        { symbol: "ETH", pair: "ETHUSDT", name: "Ethereum" },
+        { symbol: "BNB", pair: "BNBUSDT", name: "BNB" },
+        { symbol: "SOL", pair: "SOLUSDT", name: "Solana" },
+        { symbol: "XRP", pair: "XRPUSDT", name: "XRP" },
+        { symbol: "DOGE", pair: "DOGEUSDT", name: "Dogecoin" },
+        { symbol: "ADA", pair: "ADAUSDT", name: "Cardano" },
+        { symbol: "TRX", pair: "TRXUSDT", name: "TRON" }
+      ];
+
+      const grid = document.getElementById("cryptoGrid");
+      const status = document.getElementById("cryptoStatus");
+
+      if (!grid || !status) return;
+
+      const compactFormatter = new Intl.NumberFormat("en-US", {
+        notation: "compact",
+        maximumFractionDigits: 2
+      });
+
+      const cards = new Map();
+
+      function formatPrice(value) {
+        const price = Number(value);
+
+        if (!Number.isFinite(price)) return "$0.00";
+
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: price >= 1 ? 2 : 4,
+          maximumFractionDigits: price >= 1000 ? 2 : price >= 1 ? 2 : 6
+        }).format(price);
+      }
+
+      function formatPercent(value) {
+        const percent = Number(value);
+        const sign = percent > 0 ? "+" : "";
+
+        return `${sign}${percent.toFixed(2)}%`;
+      }
+
+      function formatVolume(value) {
+        const volume = Number(value);
+
+        if (!Number.isFinite(volume)) return "$0";
+
+        return `$${compactFormatter.format(volume)}`;
+      }
+
+      function setText(element, text) {
+        if (element && element.textContent !== text) {
+          element.textContent = text;
+        }
+      }
+
+      function setStatus(text, className) {
+        status.textContent = text;
+
+        const dot = document.createElement("span");
+        status.prepend(dot);
+        status.className = `crypto-status ${className}`;
+      }
+
+      function renderCards() {
+        grid.innerHTML = coins
+          .map(
+            (coin) => `
+              <article class="crypto-card" data-symbol="${coin.symbol}">
+                <div class="crypto-card__head">
+                  <div>
+                    <span class="crypto-card__name">${coin.name}</span>
+                    <span class="crypto-card__pair">${coin.symbol}/USDT</span>
+                  </div>
+                  <span class="crypto-card__badge">USDT</span>
+                </div>
+                <div class="crypto-card__price">$0.00</div>
+                <div class="crypto-card__change">0.00%</div>
+                <div class="crypto-card__stats">
+                  <div>
+                    <span>24h High</span>
+                    <strong class="crypto-card__high">$0.00</strong>
+                  </div>
+                  <div>
+                    <span>24h Low</span>
+                    <strong class="crypto-card__low">$0.00</strong>
+                  </div>
+                  <div>
+                    <span>24h Volume</span>
+                    <strong class="crypto-card__volume">$0</strong>
+                  </div>
+                  <div>
+                    <span>Updated</span>
+                    <strong class="crypto-card__updated">--:--:--</strong>
+                  </div>
+                </div>
+              </article>
+            `
+          )
+          .join("");
+
+        coins.forEach((coin) => {
+          const card = grid.querySelector(`[data-symbol="${coin.symbol}"]`);
+
+          cards.set(coin.symbol, {
+            price: card.querySelector(".crypto-card__price"),
+            change: card.querySelector(".crypto-card__change"),
+            high: card.querySelector(".crypto-card__high"),
+            low: card.querySelector(".crypto-card__low"),
+            volume: card.querySelector(".crypto-card__volume"),
+            updated: card.querySelector(".crypto-card__updated")
+          });
+        });
+      }
+
+      function updateTicker(data) {
+        const card = cards.get(data.s);
+
+        if (!card) return;
+
+        const price = formatPrice(data.c);
+        const change = formatPercent(data.P);
+        const high = formatPrice(data.h);
+        const low = formatPrice(data.l);
+        const volume = formatVolume(data.q);
+        const time = new Date(data.E).toLocaleTimeString();
+
+        setText(card.price, price);
+        setText(card.change, change);
+        setText(card.high, high);
+        setText(card.low, low);
+        setText(card.volume, volume);
+        setText(card.updated, time);
+
+        card.change.classList.toggle("is-positive", Number(data.P) > 0);
+        card.change.classList.toggle("is-negative", Number(data.P) < 0);
+      }
+
+      let socket = null;
+      let reconnectTimer = null;
+      let reconnectAttempts = 0;
+      let shouldReconnect = true;
+
+      function connectWebSocket() {
+        const streams = coins
+          .map((coin) => `${coin.pair.toLowerCase()}@ticker`)
+          .join("/");
+
+        socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+
+        socket.addEventListener("open", () => {
+          reconnectAttempts = 0;
+          setStatus("Connected", "is-connected");
+        });
+
+        socket.addEventListener("message", (event) => {
+          const message = JSON.parse(event.data);
+          updateTicker(message.data);
+        });
+
+        socket.addEventListener("close", () => {
+          if (!shouldReconnect) return;
+
+          const delay = Math.min(30000, 1000 * 2 ** reconnectAttempts);
+          reconnectAttempts += 1;
+          setStatus("Reconnecting...", "is-error");
+          reconnectTimer = window.setTimeout(connectWebSocket, delay);
+        });
+
+        socket.addEventListener("error", () => {
+          setStatus("Connection error", "is-error");
+        });
+      }
+
+      renderCards();
+      setStatus("Connecting...", "");
+      connectWebSocket();
+
+      window.addEventListener("pagehide", () => {
+        shouldReconnect = false;
+        window.clearTimeout(reconnectTimer);
+
+        if (socket) {
+          socket.close();
+        }
+      });
+    })();
+  </script>
 </body>
 
 </html>

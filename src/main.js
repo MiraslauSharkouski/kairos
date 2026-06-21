@@ -94,18 +94,18 @@ tabs.forEach((tab) => {
 });
 
 // Create account button
-document.querySelector(".create-btn").addEventListener("click", () => {
+document.querySelector(".create-btn")?.addEventListener("click", () => {
   alert("Create account functionality would go here");
 });
 
 // Google button
-document.querySelector(".google-btn").addEventListener("click", () => {
+document.querySelector(".google-btn")?.addEventListener("click", () => {
   alert("Google sign-in would go here");
 });
 
 // Email form submission
-document.querySelector(".submit-btn").addEventListener("click", () => {
-  const email = document.getElementById("emailInput").value;
+document.querySelector(".submit-btn")?.addEventListener("click", () => {
+  const email = document.getElementById("emailInput")?.value;
   if (email) {
     alert("Email submitted: " + email);
   } else {
