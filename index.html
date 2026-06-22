@@ -40,10 +40,10 @@
     </div>
   </header>
   <section class="hero_section container" id="hero">
-    <img class="hero-video" src="/src/assets/images/video/background_hero.png" alt="background_hero">
-    <!-- <video class="hero-video" autoplay muted loop playsinline>
+    <!-- <img class="hero-video" src="/src/assets/images/video/background_hero.png" alt="background_hero"> -->
+    <video class="hero-video" autoplay muted loop playsinline>
       <source src="/src/assets/images/video/background_hero.mp4" type="video/mp4" />
-    </video> -->
+    </video>
     <div class="hero__registration_blocks">
       <div class="hero_block">
         <div class="hero_title_block">
@@ -154,9 +154,9 @@
           <p class="crypto-kicker">Live market</p>
           <h2>Cryptocurrency Market</h2>
         </div>
-<div class="crypto-status" id="cryptoStatus">
-           Connecting...
-         </div>
+        <div class="crypto-status" id="cryptoStatus">
+          Connecting...
+        </div>
       </div>
 
       <div class="crypto-grid" id="cryptoGrid"></div>
@@ -207,11 +207,11 @@
         try {
           const response = await fetch("https://api.binance.com/api/v3/ticker/price");
           const allPrices = await response.json();
-          
+
           const filteredPrices = allPrices
             .filter((item) => coins.some((c) => c.pair === item.symbol))
             .map((item) => ({ symbol: item.symbol, price: item.price }));
-          
+
           updatePrices(filteredPrices);
           status.textContent = "Connected";
           status.className = "crypto-status is-connected";
@@ -239,7 +239,7 @@
       status.textContent = "Connecting...";
       status.className = "crypto-status";
       fetchPrices();
-      
+
       const interval = setInterval(fetchPrices, 5000);
 
       window.addEventListener("pagehide", () => {
