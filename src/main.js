@@ -98,9 +98,51 @@ document.querySelector(".create-btn")?.addEventListener("click", () => {
   alert("Create account functionality would go here");
 });
 
-// Google button
-document.querySelector(".google-btn")?.addEventListener("click", () => {
-  alert("Google sign-in would go here");
+// Google OAuth2
+const googleBtn = document.getElementById("googleAuthBtn");
+let googleTokenClient = null;
+
+function initGoogleOAuth() {
+  if (!window.google?.accounts?.oauth2) return;
+
+  googleTokenClient = window.google.accounts.oauth2.initTokenClient({
+    client_id:
+      "1094833636193-m338iot1kk68ps0gppngtsulvs4jllej.apps.googleusercontent.com",
+    scope: "openid profile email",
+    callback: async (tokenResponse) => {
+      if (tokenResponse.error) {
+        console.error("Google OAuth error:", tokenResponse.error);
+        return;
+      }
+
+      try {
+        const userRes = await fetch(
+          "https://www.googleapis.com/oauth2/v2/userinfo",
+          {
+            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          },
+        );
+
+        const userData = await userRes.json();
+        console.log("Google user:", userData);
+        alert(`Welcome, ${userData.name}! (${userData.email})`);
+      } catch (err) {
+        console.error("Failed to fetch user info:", err);
+      }
+    },
+  });
+}
+
+googleBtn?.addEventListener("click", () => {
+  if (!googleTokenClient) {
+    initGoogleOAuth();
+  }
+
+  if (googleTokenClient) {
+    googleTokenClient.requestAccessToken();
+  } else {
+    alert("Google OAuth is not loaded yet. Please try again.");
+  }
 });
 
 // Email form submission
