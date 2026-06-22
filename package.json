@@ -1,5 +1,6 @@
 {
   "name": "kairos",
+  "homepage": "https://miraslausharkouski.github.io/kairos",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,5 +11,8 @@
   },
   "devDependencies": {
     "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
