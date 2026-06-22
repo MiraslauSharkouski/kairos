@@ -801,7 +801,8 @@ button.gold-btn {
   white-space: nowrap;
 }
 
-.crypto-status span {
+.crypto-status::before {
+  content: "";
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -809,12 +810,12 @@ button.gold-btn {
   box-shadow: 0 0 12px var(--gold);
 }
 
-.crypto-status.is-connected span {
+.crypto-status.is-connected::before {
   background: #22c55e;
   box-shadow: 0 0 12px #22c55e;
 }
 
-.crypto-status.is-error span {
+.crypto-status.is-error::before {
   background: #ef4444;
   box-shadow: 0 0 12px #ef4444;
 }

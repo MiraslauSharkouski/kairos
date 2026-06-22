@@ -154,10 +154,9 @@
           <p class="crypto-kicker">Live market</p>
           <h2>Cryptocurrency Market</h2>
         </div>
-        <div class="crypto-status" id="cryptoStatus">
-          <span></span>
-          Connecting...
-        </div>
+<div class="crypto-status" id="cryptoStatus">
+           Connecting...
+         </div>
       </div>
 
       <div class="crypto-grid" id="cryptoGrid"></div>
@@ -184,41 +183,46 @@
 
       if (!grid || !status) return;
 
-      const compactFormatter = new Intl.NumberFormat("en-US", {
-        notation: "compact",
-        maximumFractionDigits: 2
-      });
-
-      const cards = new Map();
-
-      function formatPrice(value) {
+      const formatPrice = (value) => {
         const price = Number(value);
-
         if (!Number.isFinite(price)) return "$0.00";
-
         return new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
           minimumFractionDigits: price >= 1 ? 2 : 4,
           maximumFractionDigits: price >= 1000 ? 2 : price >= 1 ? 2 : 6
         }).format(price);
-      }
+      };
 
-      function setText(element, text) {
-        if (element && element.textContent !== text) {
-          element.textContent = text;
+      const updatePrices = (prices) => {
+        prices.forEach(({ symbol, price }) => {
+          const cardPrice = grid.querySelector(`[data-symbol="${symbol}"] .crypto-card__price`);
+          if (cardPrice) {
+            cardPrice.textContent = formatPrice(price);
+          }
+        });
+      };
+
+      const fetchPrices = async () => {
+        try {
+          const response = await fetch("https://api.binance.com/api/v3/ticker/price");
+          const allPrices = await response.json();
+          
+          const filteredPrices = allPrices
+            .filter((item) => coins.some((c) => c.pair === item.symbol))
+            .map((item) => ({ symbol: item.symbol, price: item.price }));
+          
+          updatePrices(filteredPrices);
+          status.textContent = "Connected";
+          status.className = "crypto-status is-connected";
+        } catch (error) {
+          status.textContent = "Connection error";
+          status.className = "crypto-status is-error";
+          console.error("Failed to fetch prices:", error);
         }
-      }
+      };
 
-      function setStatus(text, className) {
-        status.textContent = text;
-
-        const dot = document.createElement("span");
-        status.prepend(dot);
-        status.className = `crypto-status ${className}`;
-      }
-
-      function renderCards() {
+      const renderCards = () => {
         grid.innerHTML = coins
           .map(
             (coin) => `
@@ -229,76 +233,17 @@
             `
           )
           .join("");
-
-        coins.forEach((coin) => {
-          const card = grid.querySelector(`[data-symbol="${coin.symbol}"]`);
-
-          cards.set(coin.symbol, {
-            price: card.querySelector(".crypto-card__price")
-          });
-        });
-      }
-
-      function updateTicker(data) {
-        const card = cards.get(data.s);
-
-        if (!card) {
-          console.warn("Card not found for", data.s);
-          return;
-        }
-
-        const price = formatPrice(data.c);
-
-        setText(card.price, price);
-      }
-
-      let socket = null;
-      let reconnectTimer = null;
-      let reconnectAttempts = 0;
-      let shouldReconnect = true;
-
-      function connectWebSocket() {
-        const streams = coins
-          .map((coin) => `${coin.pair.toLowerCase()}@ticker`)
-          .join("/");
-
-        socket = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
-
-        socket.addEventListener("open", () => {
-          reconnectAttempts = 0;
-          setStatus("Connected", "is-connected");
-        });
-
-        socket.addEventListener("message", (event) => {
-          const message = JSON.parse(event.data);
-          updateTicker(message.data);
-        });
-
-        socket.addEventListener("close", () => {
-          if (!shouldReconnect) return;
-
-          const delay = Math.min(30000, 1000 * 2 ** reconnectAttempts);
-          reconnectAttempts += 1;
-          setStatus("Reconnecting...", "is-error");
-          reconnectTimer = window.setTimeout(connectWebSocket, delay);
-        });
-
-        socket.addEventListener("error", () => {
-          setStatus("Connection error", "is-error");
-        });
-      }
+      };
 
       renderCards();
-      setStatus("Connecting...", "");
-      connectWebSocket();
+      status.textContent = "Connecting...";
+      status.className = "crypto-status";
+      fetchPrices();
+      
+      const interval = setInterval(fetchPrices, 5000);
 
       window.addEventListener("pagehide", () => {
-        shouldReconnect = false;
-        window.clearTimeout(reconnectTimer);
-
-        if (socket) {
-          socket.close();
-        }
+        clearInterval(interval);
       });
     })();
   </script>
