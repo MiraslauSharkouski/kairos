@@ -5,10 +5,10 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/src/assets/css/style.css">
-    <title>kairos</title>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-  </head>
+  <link rel="stylesheet" href="/src/assets/css/style.css">
+  <title>kairos</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
 
 <body>
   <header class="header container">
@@ -204,21 +204,6 @@
         }).format(price);
       }
 
-      function formatPercent(value) {
-        const percent = Number(value);
-        const sign = percent > 0 ? "+" : "";
-
-        return `${sign}${percent.toFixed(2)}%`;
-      }
-
-      function formatVolume(value) {
-        const volume = Number(value);
-
-        if (!Number.isFinite(volume)) return "$0";
-
-        return `$${compactFormatter.format(volume)}`;
-      }
-
       function setText(element, text) {
         if (element && element.textContent !== text) {
           element.textContent = text;
@@ -237,34 +222,9 @@
         grid.innerHTML = coins
           .map(
             (coin) => `
-              <article class="crypto-card" data-symbol="${coin.symbol}">
-                <div class="crypto-card__head">
-                  <div>
-                    <span class="crypto-card__name">${coin.name}</span>
-                    <span class="crypto-card__pair">${coin.symbol}/USDT</span>
-                  </div>
-                  <span class="crypto-card__badge">USDT</span>
-                </div>
+              <article class="crypto-card" data-symbol="${coin.pair}">
+                <div class="crypto-card__name">${coin.name}</div>
                 <div class="crypto-card__price">$0.00</div>
-                <div class="crypto-card__change">0.00%</div>
-                <div class="crypto-card__stats">
-                  <div>
-                    <span>24h High</span>
-                    <strong class="crypto-card__high">$0.00</strong>
-                  </div>
-                  <div>
-                    <span>24h Low</span>
-                    <strong class="crypto-card__low">$0.00</strong>
-                  </div>
-                  <div>
-                    <span>24h Volume</span>
-                    <strong class="crypto-card__volume">$0</strong>
-                  </div>
-                  <div>
-                    <span>Updated</span>
-                    <strong class="crypto-card__updated">--:--:--</strong>
-                  </div>
-                </div>
               </article>
             `
           )
@@ -274,12 +234,7 @@
           const card = grid.querySelector(`[data-symbol="${coin.symbol}"]`);
 
           cards.set(coin.symbol, {
-            price: card.querySelector(".crypto-card__price"),
-            change: card.querySelector(".crypto-card__change"),
-            high: card.querySelector(".crypto-card__high"),
-            low: card.querySelector(".crypto-card__low"),
-            volume: card.querySelector(".crypto-card__volume"),
-            updated: card.querySelector(".crypto-card__updated")
+            price: card.querySelector(".crypto-card__price")
           });
         });
       }
@@ -287,24 +242,14 @@
       function updateTicker(data) {
         const card = cards.get(data.s);
 
-        if (!card) return;
+        if (!card) {
+          console.warn("Card not found for", data.s);
+          return;
+        }
 
         const price = formatPrice(data.c);
-        const change = formatPercent(data.P);
-        const high = formatPrice(data.h);
-        const low = formatPrice(data.l);
-        const volume = formatVolume(data.q);
-        const time = new Date(data.E).toLocaleTimeString();
 
         setText(card.price, price);
-        setText(card.change, change);
-        setText(card.high, high);
-        setText(card.low, low);
-        setText(card.volume, volume);
-        setText(card.updated, time);
-
-        card.change.classList.toggle("is-positive", Number(data.P) > 0);
-        card.change.classList.toggle("is-negative", Number(data.P) < 0);
       }
 
       let socket = null;
